@@ -2,6 +2,8 @@ package com.example.movies;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private RecyclerView recyclerViewMovies;
     private MoviesAdapter moviesAdapter;
+    private ProgressBar progressBarLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
+        progressBarLoading = findViewById(R.id.progressBarLoading);
         recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
         moviesAdapter = new MoviesAdapter();
         recyclerViewMovies.setAdapter(moviesAdapter);
@@ -44,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, movies -> moviesAdapter.setMovies(movies));
-        viewModel.loadMovies();
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            if(isLoading) {
+                progressBarLoading.setVisibility(View.VISIBLE);
+            } else {
+                progressBarLoading.setVisibility(View.GONE);
+            }
+        });
+        moviesAdapter.setOnReachEndListener(() -> viewModel.loadMovies());
     }
 }
