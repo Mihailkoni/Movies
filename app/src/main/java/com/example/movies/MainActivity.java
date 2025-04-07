@@ -1,5 +1,6 @@
 package com.example.movies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -55,5 +56,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         moviesAdapter.setOnReachEndListener(() -> viewModel.loadMovies());
+
+        moviesAdapter.setOnMovieClickListener(movie -> {
+            Intent intent = MovieDetailActivity.newIntent(MainActivity.this,movie);
+            startActivity(intent);
+        });
     }
 }

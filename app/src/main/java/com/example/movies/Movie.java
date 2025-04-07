@@ -2,7 +2,9 @@ package com.example.movies;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable{
     /** Здесь мы делаем аннотации рядом с каждым полем т.к каждое приложение
     при загрузке в play market проходит <u><b>обфускации</u></b> и
     все названия (переменных, классов и т.д) меняются,
