@@ -2,7 +2,9 @@ package com.example.movies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,12 +13,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class MovieDetailActivity extends AppCompatActivity {
 
+    private static final String TAG = "MovieDetailActivity";
+
     private static final String EXTRA_MOVIE = "movie";
+
+    private MovieDetailViewModel viewModel;
 
     private ImageView imageViewPoster;
     private TextView textViewTitle;
@@ -34,6 +48,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             return insets;
         });
 
+        viewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
+
         init();
 
         Movie movie = (Movie) getIntent().getSerializableExtra(EXTRA_MOVIE);
@@ -43,6 +59,14 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewTitle.setText(movie.getName());
         textViewYear.setText(String.valueOf(movie.getYear()));
         textViewDescription.setText(movie.getDescription());
+
+        viewModel.loadTrailers(movie.getId());
+        viewModel.getTrailers().observe(this, new Observer<List<Trailer>>() {
+            @Override
+            public void onChanged(List<Trailer> trailers) {
+                Log.d(TAG,trailers.toString());
+            }
+        });
     }
 
     private void init() {
