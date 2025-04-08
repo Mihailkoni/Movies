@@ -2,6 +2,7 @@ package com.example.movies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,6 +70,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         viewModel.loadTrailers(movie.getId());
         viewModel.getTrailers().observe(this, trailers -> trailersAdapter.setTrailers(trailers));
+
+        trailersAdapter.setOnTrailerClickListener(trailer -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(trailer.getUrl()));
+            startActivity(intent);
+        });
     }
 
     private void init() {
