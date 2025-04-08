@@ -2,15 +2,18 @@ package com.example.movies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,6 +41,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView textViewTitle;
     private TextView textViewYear;
     private TextView textViewDescription;
+    private ImageView imageViewLike;
 
     private RecyclerView recyclerViewTrailers;
     private TrailersAdapter trailersAdapter;
@@ -85,6 +89,32 @@ public class MovieDetailActivity extends AppCompatActivity {
             intent.setData(Uri.parse(trailer.getUrl()));
             startActivity(intent);
         });
+
+        Drawable likeOff = ContextCompat.getDrawable(
+                MovieDetailActivity.this,
+                R.drawable.icon_before_add_to_favorite
+        );
+
+        Drawable likeOn = ContextCompat.getDrawable(
+                MovieDetailActivity.this,
+                R.drawable.icon_after_add_to_favorite
+        );
+
+        Drawable likeBackground = ContextCompat.getDrawable(
+                MovieDetailActivity.this,
+                R.drawable.circle_for_favorite
+        );
+        viewModel.getFavoriteMovie(movie.getId()).observe(this, movieFromDB -> {
+             if(movieFromDB == null) {
+                 imageViewLike.setImageDrawable(likeOff);
+                 imageViewLike.setBackground(likeBackground);
+                 imageViewLike.setOnClickListener(view -> viewModel.insertMovie(movie));
+             } else {
+                 imageViewLike.setImageDrawable(likeOn);
+                 imageViewLike.setBackground(likeBackground);
+                 imageViewLike.setOnClickListener(view -> viewModel.removeMovie(movie.getId()));
+             }
+        });
     }
 
     private void init() {
@@ -94,6 +124,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewDescription = findViewById(R.id.textViewDescription);
         recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
         recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
+        imageViewLike = findViewById(R.id.imageViewLike);
     }
 
     public static Intent newIntent(Context context,Movie movie){
