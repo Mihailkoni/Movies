@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/white"
-            tools:text="Trailer Name" />
+            tools:text="Trailer Name"
+            android:layout_margin="8dp"/>
 
         <ImageView
             android:id="@+id/imageViewPlayImage"
