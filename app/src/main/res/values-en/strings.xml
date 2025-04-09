@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="review_author">Review\'s author:</string>
+    <string name="review_type">Review\'s type:</string>
+    <string name="start_trailers">Trailers:</string>
+    <string name="start_reviews">Reviews:</string>
+    <string name="menu_favorite_movies_title">Favorite</string>
+    <string name="empty_error">We do our best to make sure you see your favorite movies :)</string>
+    <string name="empty_favorites_movie">You haven\'t added anything yet :)</string>
+</resources>

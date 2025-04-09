@@ -3,10 +3,15 @@ package com.example.movies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,18 +21,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.functions.Consumer;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
 public class MainActivity extends AppCompatActivity {
 
-    private MainViewModel viewModel;
+    private static final String TAG = "MainActivity";
+
     private RecyclerView recyclerViewMovies;
-    private MoviesAdapter moviesAdapter;
     private ProgressBar progressBarLoading;
+    private ImageView imageViewError;
+    private TextView textViewError;
+
+    private MainViewModel viewModel;
+    private MoviesAdapter moviesAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        init();
 
-        progressBarLoading = findViewById(R.id.progressBarLoading);
-        recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
         moviesAdapter = new MoviesAdapter();
         recyclerViewMovies.setAdapter(moviesAdapter);
         recyclerViewMovies.setLayoutManager(new GridLayoutManager(this,2));
@@ -55,11 +59,42 @@ public class MainActivity extends AppCompatActivity {
                 progressBarLoading.setVisibility(View.GONE);
             }
         });
-        moviesAdapter.setOnReachEndListener(() -> viewModel.loadMovies());
+        viewModel.getIsError().observe(this, error -> {
+            if(error) {
+                imageViewError.setVisibility(View.VISIBLE);
+                textViewError.setVisibility(View.VISIBLE);
+            } else {
+                imageViewError.setVisibility(View.GONE);
+                textViewError.setVisibility(View.GONE);
+            }
+        });
 
+        moviesAdapter.setOnReachEndListener(() -> viewModel.loadMovies());
         moviesAdapter.setOnMovieClickListener(movie -> {
             Intent intent = MovieDetailActivity.newIntent(MainActivity.this,movie);
             startActivity(intent);
         });
+    }
+
+    private void init() {
+        progressBarLoading = findViewById(R.id.progressBarLoading);
+        recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
+        imageViewError = findViewById(R.id.imageViewError);
+        textViewError = findViewById(R.id.textViewError);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.favorite_movies_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.favoriteMoviesMenu) {
+            Intent intent = FavoriteMovieActivity.newIntent(this);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

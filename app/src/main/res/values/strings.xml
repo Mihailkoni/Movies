@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Movies</string>
+    <string name="app_name">Фильмы</string>
     <string name="review_author">Автор отзыва: </string>
     <string name="review_type">Тип отзыва: </string>
     <string name="start_trailers">Трейлеры:</string>
     <string name="start_reviews">Отзывы:</string>
+    <string name="menu_favorite_movies_title">Избранное</string>
+    <string name="empty_error">Мы делаем всё возможное, чтобы вы увидели любимые фильмы :)</string>
+    <string name="empty_favorites_movie">Вы пока ничего не добавили :)</string>
 </resources>

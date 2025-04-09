@@ -13,7 +13,6 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -22,6 +21,7 @@ public class MainViewModel extends AndroidViewModel {
     private static final String TAG = "MainViewModel";
     private final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isError = new MutableLiveData<>(false);
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -40,6 +40,10 @@ public class MainViewModel extends AndroidViewModel {
         return isLoading;
     }
 
+    public MutableLiveData<Boolean> getIsError() {
+        return isError;
+    }
+
     public void loadMovies() {
         Boolean loading = isLoading.getValue();
         if(loading != null && loading){
@@ -52,6 +56,7 @@ public class MainViewModel extends AndroidViewModel {
                 .doAfterTerminate(() -> isLoading.setValue(false))
                 .subscribe(
                         movieResponse -> {
+                            isError.setValue(false);
                             List<Movie> loadedMovies = movies.getValue();
                             if (loadedMovies != null) {
                                 loadedMovies.addAll(movieResponse.getMovies());
@@ -59,10 +64,10 @@ public class MainViewModel extends AndroidViewModel {
                             } else {
                                 movies.setValue(movieResponse.getMovies());
                             }
-                            Log.d(TAG,"Loaded: " + page);
+                            Log.d(TAG, "Loaded: " + page);
                             page++;
                         },
-                        throwable -> Log.d(TAG,throwable.toString())
+                        throwable -> isError.setValue(true)
                 );
         compositeDisposable.add(disposable);
     }
