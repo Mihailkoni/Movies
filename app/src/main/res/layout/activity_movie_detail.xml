@@ -61,13 +61,45 @@
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/textViewDescription" />
 
+        <LinearLayout
+            android:id="@+id/linearLayoutEmptyTrailers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewStartTrailers"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/imageViewEmptyTrailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circle_red"
+                android:contentDescription="@null"
+                android:padding="8dp"
+                android:src="@drawable/icon_empty_trailers_reviews" />
+
+            <TextView
+                android:id="@+id/textViewErrorTrailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:textAlignment="center"
+                android:textStyle="italic"
+                tools:text="@string/error_template" />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTrailers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/textViewStartTrailers"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutEmptyTrailers"
             tools:listitem="@layout/trailer_item" />
 
         <TextView
@@ -81,13 +113,45 @@
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/recyclerViewTrailers" />
 
+        <LinearLayout
+            android:id="@+id/linearLayoutEmptyReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewStartReviews"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/imageViewEmptyReviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circle_red"
+                android:contentDescription="@null"
+                android:padding="8dp"
+                android:src="@drawable/icon_empty_trailers_reviews" />
+
+            <TextView
+                android:id="@+id/textViewErrorReviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:textAlignment="center"
+                android:textStyle="italic"
+                tools:text="@string/error_template" />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewReviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/textViewStartReviews"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutEmptyReviews"
             tools:listitem="@layout/review_item" />
 
         <ImageView
@@ -95,10 +159,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:background="@drawable/circle_green"
             android:contentDescription="@null"
             app:layout_constraintBottom_toBottomOf="@id/imageViewPoster"
             app:layout_constraintEnd_toEndOf="@id/imageViewPoster"
-            tools:background="@drawable/circle_for_favorite"
             tools:srcCompat="@drawable/icon_before_add_to_favorite" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

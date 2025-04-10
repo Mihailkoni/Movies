@@ -2,21 +2,21 @@ package com.example.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewMovies;
     private ProgressBar progressBarLoading;
-    private ImageView imageViewError;
+    private FrameLayout frameLayoutError;
     private TextView textViewError;
+    private Button buttonRetry;
 
     private MainViewModel viewModel;
     private MoviesAdapter moviesAdapter;
@@ -60,13 +61,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         viewModel.getIsError().observe(this, error -> {
-            if(error) {
-                imageViewError.setVisibility(View.VISIBLE);
-                textViewError.setVisibility(View.VISIBLE);
+            if (error != null && !error.isEmpty()) {
+                showError(error);
             } else {
-                imageViewError.setVisibility(View.GONE);
-                textViewError.setVisibility(View.GONE);
+                hideError();
             }
+        });
+        buttonRetry.setOnClickListener(view -> {
+            hideError();
+            viewModel.loadMovies();
         });
 
         moviesAdapter.setOnReachEndListener(() -> viewModel.loadMovies());
@@ -76,11 +79,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showError(String errorMessage) {
+        String error = ContextCompat.getString(
+                MainActivity.this,
+                R.string.error_template
+        ) + " " + errorMessage;
+        textViewError.setText(error);
+        frameLayoutError.setVisibility(View.VISIBLE);
+        frameLayoutError.bringToFront();
+    }
+
+    private void hideError() {
+        frameLayoutError.setVisibility(View.GONE);
+    }
+
     private void init() {
         progressBarLoading = findViewById(R.id.progressBarLoading);
         recyclerViewMovies = findViewById(R.id.recyclerViewMovies);
-        imageViewError = findViewById(R.id.imageViewError);
+        frameLayoutError = findViewById(R.id.frameLayoutError);
         textViewError = findViewById(R.id.textViewError);
+        buttonRetry = findViewById(R.id.buttonRetry);
     }
 
     @Override

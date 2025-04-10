@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,8 +22,7 @@ import java.util.List;
 
 public class FavoriteMovieActivity extends AppCompatActivity {
 
-    private ImageView imageViewEmptyFavorites;
-    private TextView textViewEmptyFavorites;
+    private FrameLayout frameLayoutEmptyFavorites;
     private RecyclerView recyclerViewFavoriteMovies;
 
     @Override
@@ -53,21 +53,27 @@ public class FavoriteMovieActivity extends AppCompatActivity {
         );
 
         favoriteMovieViewModel.getFavoriteMovies().observe(this, movies -> {
-            if(!movies.isEmpty()) {
+            if(movies != null && !movies.isEmpty()) {
                 moviesAdapter.setMovies(movies);
-                imageViewEmptyFavorites.setVisibility(View.GONE);
-                textViewEmptyFavorites.setVisibility(View.GONE);
+                showEmptyError();
             } else {
-                imageViewEmptyFavorites.setVisibility(View.VISIBLE);
-                textViewEmptyFavorites.setVisibility(View.VISIBLE);
+                moviesAdapter.setMovies(movies);
+                hideEmptyError();
             }
         });
     }
 
     private void init() {
-        imageViewEmptyFavorites = findViewById(R.id.imageViewEmptyFavorites);
-        textViewEmptyFavorites = findViewById(R.id.textViewEmptyFavorites);
+        frameLayoutEmptyFavorites = findViewById(R.id.frameLayoutEmptyFavorites);
         recyclerViewFavoriteMovies = findViewById(R.id.recyclerViewFavoriteMovies);
+    }
+
+    private void showEmptyError() {
+        frameLayoutEmptyFavorites.setVisibility(View.GONE);
+    }
+
+    private void hideEmptyError() {
+        frameLayoutEmptyFavorites.setVisibility(View.VISIBLE);
     }
 
     public static Intent newIntent(Context context) {

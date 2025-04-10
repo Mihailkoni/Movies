@@ -4,30 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-
-import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.functions.Consumer;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -42,6 +30,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView textViewYear;
     private TextView textViewDescription;
     private ImageView imageViewLike;
+    private LinearLayout linearLayoutEmptyReviews;
+    private LinearLayout linearLayoutEmptyTrailers;
+    private TextView textViewErrorTrailers;
+    private TextView textViewErrorReviews;
 
     private RecyclerView recyclerViewTrailers;
     private TrailersAdapter trailersAdapter;
@@ -75,9 +67,23 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         viewModel.loadTrailers(movie.getId());
         viewModel.getTrailers().observe(this, trailers -> trailersAdapter.setTrailers(trailers));
+        viewModel.getIsErrorTrailers().observe(this, error -> {
+            if (error != null && !error.isEmpty()) {
+                showError(error,textViewErrorTrailers,linearLayoutEmptyTrailers);
+            } else {
+                hideError(linearLayoutEmptyTrailers);
+            }
+        });
 
         viewModel.loadReviews(movie.getId());
         viewModel.getReviews().observe(this, reviews -> reviewsAdapter.setReviews(reviews));
+        viewModel.getIsErrorReviews().observe(this, error -> {
+            if (error != null && !error.isEmpty()) {
+                showError(error,textViewErrorReviews,linearLayoutEmptyReviews);
+            } else {
+                hideError(linearLayoutEmptyReviews);
+            }
+        });
 
         trailersAdapter.setOnTrailerClickListener(trailer -> {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -95,18 +101,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                 R.drawable.icon_after_add_to_favorite
         );
 
-        Drawable likeBackground = ContextCompat.getDrawable(
-                MovieDetailActivity.this,
-                R.drawable.circle_for_favorite
-        );
         viewModel.getFavoriteMovie(movie.getId()).observe(this, movieFromDB -> {
              if(movieFromDB == null) {
                  imageViewLike.setImageDrawable(likeOff);
-                 imageViewLike.setBackground(likeBackground);
                  imageViewLike.setOnClickListener(view -> viewModel.insertMovie(movie));
              } else {
                  imageViewLike.setImageDrawable(likeOn);
-                 imageViewLike.setBackground(likeBackground);
                  imageViewLike.setOnClickListener(view -> viewModel.removeMovie(movie.getId()));
              }
         });
@@ -120,6 +120,23 @@ public class MovieDetailActivity extends AppCompatActivity {
         recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
         recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
         imageViewLike = findViewById(R.id.imageViewLike);
+        linearLayoutEmptyReviews = findViewById(R.id.linearLayoutEmptyReviews);
+        linearLayoutEmptyTrailers = findViewById(R.id.linearLayoutEmptyTrailers);
+        textViewErrorTrailers = findViewById(R.id.textViewErrorTrailers);
+        textViewErrorReviews = findViewById(R.id.textViewErrorReviews);
+    }
+
+    private void showError(String errorMessage, TextView textViewError,LinearLayout linearLayoutError) {
+        String error = ContextCompat.getString(
+                this,
+                R.string.error_template
+        ) + " " + errorMessage;
+        textViewError.setText(error);
+        linearLayoutError.setVisibility(View.VISIBLE);
+    }
+
+    private void hideError(LinearLayout linearLayoutError) {
+        linearLayoutError.setVisibility(View.GONE);
     }
 
     public static Intent newIntent(Context context,Movie movie){
