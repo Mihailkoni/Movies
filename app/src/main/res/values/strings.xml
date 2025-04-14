@@ -14,4 +14,5 @@
     <string name="unknown_error">Произошла неизвестная ошибка</string>
     <string name="server_error">Ошибка сервера</string>
     <string name="timeout_error">Ошибка времени ожидания запроса</string>
+    <string name="nullpointer_error">Тут ничего нет :)</string>
 </resources>

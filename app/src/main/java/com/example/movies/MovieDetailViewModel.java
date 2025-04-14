@@ -16,6 +16,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.HttpException;
 
@@ -41,6 +42,10 @@ public class MovieDetailViewModel extends AndroidViewModel {
     private final String TIMEOUT_ERROR = ContextCompat.getString(
             this.getApplication(),
             R.string.timeout_error
+    );
+    private final String NULL_POINTER_ERROR = ContextCompat.getString(
+            this.getApplication(),
+            R.string.nullpointer_error
     );
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -82,9 +87,16 @@ public class MovieDetailViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(trailerResponse -> trailerResponse.getTrailersList().getTrailers())
-                .subscribe(trailers::setValue, throwable -> {
-                    handleError(throwable,isErrorTrailers);
-                    Log.d(TAG,throwable.toString());
+                .subscribe(trailersList -> {
+                    if(trailersList != null && !trailersList.isEmpty()){
+                        trailers.setValue(trailersList);
+                    } else {
+                        NullPointerException error = new NullPointerException();
+                        handleError(error,isErrorTrailers);
+                    }
+                }, throwable -> {
+                    handleError(throwable, isErrorTrailers);
+                    Log.d(TAG, throwable.toString());
                 });
         compositeDisposable.add(disposable);
     }
@@ -130,6 +142,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
             }
         } else if (error instanceof SocketTimeoutException) {
             isError.setValue(TIMEOUT_ERROR);
+        } else if (error instanceof NullPointerException) {
+            isError.setValue(NULL_POINTER_ERROR);
         } else {
             isError.setValue(UNKNOWN_ERROR);
         }

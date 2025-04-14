@@ -15,4 +15,5 @@
     <string name="unknown_error">Unknown error occurred</string>
     <string name="server_error">Server error</string>
     <string name="timeout_error">Request timeout</string>
+    <string name="nullpointer_error">There\'s nothing here :)</string>
 </resources>
