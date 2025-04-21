@@ -24,7 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
+    /**
+     * Добавить кнопку "смотреть", и если в api нет просмотра на кинопоиске, не отображать её.
+     * Исправить баг при отсоединении интернета когда можно при быстром нажатии зайти в описание фильма.
+     * На экране фильма и скрыть трейлеры, отзывы, чтобы их можно было открывать при нажатии.
+     */
     private RecyclerView recyclerViewMovies;
     private ProgressBar progressBarLoading;
     private FrameLayout frameLayoutError;
